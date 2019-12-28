@@ -1,4 +1,4 @@
-# soteria
+# Soteria
 #### This project designs a device that communicates with a server through gprs(2g) through MQTT communication protocol.
 
 ##  Parts
