@@ -9,3 +9,13 @@
 ## Stack
  * C/CPP
 * nodejs
+
+# Top-level directory layout
+      .                  
+      ├── public             
+      ├── src───────────|
+      └── README.md     ├── Arduino_client
+                        └── Cloud_server 
+       
+      
+            
