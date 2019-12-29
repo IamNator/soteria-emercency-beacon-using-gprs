@@ -72,8 +72,10 @@ void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* to
      delay(2000);
 
      GPRS.println("AT+CIFSR"); //get local IP Address
-     Serial.println("AT+CIFSR");
+     Serial.print("AT+CIFSR :");
+   //   Serial.println(  ( while(GPRS.available) return GPRS.read(); )  );
      delay(2000);
+     ShowSerialData();
 
 /***********************Send TCP/IP messages****************************/   
 
@@ -82,9 +84,10 @@ void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* to
      strcat(atCommand, "\",\"");
      strcat(atCommand, brokerPort);
      strcat(atCommand, "\"");
+     //atCommand = "AT+CIPSTART=\"TCP\",\"" + brokerUrl + "\",\"" + brokerPort + "\"" ;
      GPRS.println(atCommand);
      Serial.println(atCommand);
-     Serial.println("AT+CIPSTART=\"TCP\",\""+brokerUrl+"\",\""+brokerUrl+"\"");
+     //Serial.println("AT+CIPSTART=\"TCP\",\""+brokerUrl+"\",\""+brokerUrl+"\"");
      delay(2000);
 
      GPRS.println("AT+CIPSEND");
