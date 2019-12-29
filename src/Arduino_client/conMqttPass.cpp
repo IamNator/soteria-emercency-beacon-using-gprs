@@ -81,11 +81,10 @@ void mqtt_publish_message(uint8_t * mqtt_message, char * topic, char * message) 
         for(i = 0; i < message_length; i++){
             mqtt_message[4 + topic_length + i] = message[i];
         }
-      *(arr+i) = 'h'; //same as arr[i] = 'h';
 
 	}
 
 	void mqtt_disconnect_message(uint8_t * mqtt_message) {
 		mqtt_message[0] = 0xE0; // msgtype = connect
 		mqtt_message[1] = 0x00; // length of message (?)
-}
+	}

@@ -38,7 +38,7 @@ char PASSWORD[] = "zxvG7oUXAvf8"; //password
            /* The arguments here are:
         clientID, IP, Port, Topic, Message
         */
-          sendMQTTMessage(CLIENT_ID, MQTT_HOST_DOMAIN, MQTT_TCP_PORT, MQTT_TOPIC, light_status); 
+          sendMQTTMessage(CLIENT_ID, MQTT_HOST_DOMAIN, MQTT_TCP_PORT, MQTT_TOPIC, light_status, USERNAME, PASSWORD); 
        }
 
 
