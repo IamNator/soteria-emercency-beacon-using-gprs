@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
-#include "conMqttPass.h"
+#include "mqtt.h"
 #include "publish_function.h"
 
 SoftwareSerial GPRS(4,5); //RX TX
@@ -56,7 +56,7 @@ bool isGPRSReady(){
 
 }
 
-void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* topic, char* message, char* username, char* password){
+void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* topic, char* message){
     
      char atCommand[50];
      GPRS.println("AT"); // Sends AT command to wake up cell phone
@@ -94,9 +94,9 @@ void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* to
      Serial.println("AT+CIPSEND");
      delay(2000);
 
-     int mqttMessageLength = 20 + strlen(clientId) + strlen(username) + strlen(password);
+     int mqttMessageLength = 16 + strlen(clientId);
      Serial.println(mqttMessageLength);
-     mqtt_connect_message(mqttMessage, clientId, username, password);
+     mqtt_connect_message(mqttMessage, clientId);
 
      for (int j = 0; j < mqttMessageLength; j++) {
          GPRS.write(mqttMessage[j]); // Message contents

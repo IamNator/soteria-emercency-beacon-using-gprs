@@ -1,16 +1,15 @@
 
-#include "conMqttPass.h"
+#include "mqtt.h"
 #include "publish_function.h"
 
-char MQTT_HOST_DOMAIN[] = "farmer.cloudmqtt.com"; //brokerUrl
-char MQTT_TCP_PORT[] = "10330"; //brokerPort
-char MQTT_WEBSOCKET_PORT[] = "30330";
+char MQTT_HOST_DOMAIN[] = "broker.hivemq.com"; //brokerUrl
+char MQTT_TCP_PORT[] = "1883"; //brokerPort
+char MQTT_WEBSOCKET_PORT[] = "8000";
 char MQTT_TOPIC[] = "hive/light_status";
 #define GSM_ON 7
-char CLIENT_ID[] = "testClientID";
+char CLIENT_ID[] = "clientID";
 
-char USERNAME[] = "jxyowems"; //username
-char PASSWORD[] = "zxvG7oUXAvf8"; //password
+
 
 
  void setup(){
