@@ -1,13 +1,42 @@
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+//#include <iostream>/
 #include "conMqttPass.h"
 #include "publish_function.h"
 
-SoftwareSerial GPRS(4,5); //RX TX
+SoftwareSerial GPRS(3,2); //to TX_A6, to RX_A6
 
 
 byte mqttMessage[127];
 //byte === uint8_t
+
+
+///int indexof(string text, string pattern){
+    //where appears the pattern in the text?
+//    int loc = text.std::find(pattern, 0);/
+//    if (loc != string::npos)/
+//    {/
+//      re/turn loc;
+//    }/
+//    else/{
+//      retur/n -1;
+//    }/
+//}/
+
+
+void UPDATE_SERIAL()
+{
+  delay(500);
+  while (Serial.available()) 
+  {
+    GPRS.write(Serial.read());//Forward what Serial received to Software Serial Port
+  }
+  while(GPRS.available()) 
+  {
+    Serial.write(GPRS.read());//Forward what Software Serial received to Serial Port
+  }
+}
+
 
 void serialComs(int baud_Serial_monitor, int baud_sim_module, int delay_micro){ //initial serial commnication
    
@@ -17,44 +46,16 @@ void serialComs(int baud_Serial_monitor, int baud_sim_module, int delay_micro){ 
 
 }
 
-
-void ShowSerialData() //note .read() reads one byte/char at a time, 
-{
-  while(GPRS.available()!=0)  /* If data is available on serial port */
-  Serial.write(char (GPRS.read())); /* Print character received on to the serial monitor */
+String ShowSerialData() {
+  String reply = "";
+  if (GPRS.available())  {
+    reply = GPRS.readString();
+  }
+    Serial.print("Reply: ");
+    Serial.println(reply);
+  return reply;
 }
 
-bool isGPRSReady(){
-
-   GPRS.println("AT");
-   GPRS.println("AT");
-   GPRS.println("AT+CGATT?");
-   int index = 0;
-   char data1;
-   char * gprsStr;
-
-   while (GPRS.available()){
-      data1 = (char)GPRS.read();
-      Serial.write(data1);
-      gprsStr[index++] = data1;
-   }
-
-      Serial.println("Check OK");
-      Serial.print("gprs str = ");
-      Serial.println(gprsStr);
-
-   if (gprsStr=="OK"){
-      Serial.println("GPRS OK");
-   return true;
-   }
-   else {
-      Serial.println("GPRS NOT OK");
-   return false;
-   }
-
-   Serial.println("send AT to wake up GPRS");
-
-}
 
 void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* topic, char* message, char* username, char* password){
     
@@ -72,10 +73,10 @@ void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* to
      delay(2000);
 
      GPRS.println("AT+CIFSR"); //get local IP Address
-     Serial.print("AT+CIFSR :");
+   //   Serial.print("AT+CIFSR :");
    //   Serial.println(  ( while(GPRS.available) return GPRS.read(); )  );
      delay(2000);
-     ShowSerialData();
+
 
 /***********************Send TCP/IP messages****************************/   
 
@@ -95,19 +96,35 @@ void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* to
      delay(2000);
 
      int mqttMessageLength = 20 + strlen(clientId) + strlen(username) + strlen(password);
+     
      Serial.println(mqttMessageLength);
+     delay(50);
+     
      mqtt_connect_message(mqttMessage, clientId, username, password);
 
-     for (int j = 0; j < mqttMessageLength; j++) {
-         GPRS.write(mqttMessage[j]); // Message contents
-         Serial.write(mqttMessage[j]); // Message contents
-         Serial.println("");
-     }
+     char mesage[60];
+     int j;
 
-     GPRS.write(byte(26)); // (signals end of message)
+      for (j = 0; j < mqttMessageLength; j++) { //Prints to Sim module
+         mesage[j] = mqttMessage[j]; // Message contents
+      }
+
+      mesage[++j] = '\0';
+      String meg = mesage;
+      Serial.println(meg);
+
+//   /  for (int j = 0; j < mqttMessageLength; j++) { //Prints to Sim module
+//      /   /GPRS.write(mqttMessage[j]); // Message contents
+//     }/
+
+//     GP/RS.write(byte(26)); // (signals end of message)
+
+     
      Serial.println("Sent");
-     delay(10000);
+     delay(1000);
 
+ //*********************************sending values to Mqtt********************/
+    
      GPRS.println("AT+CIPSEND");
      Serial.println("AT+CIPSEND");
      delay(2000);
@@ -124,9 +141,93 @@ void sendMQTTMessage(char* clientId, char* brokerUrl, char* brokerPort, char* to
 /***********************************/
 
      Serial.println("-------------Sent-------------"); // Message contents
-     delay(5000);
+     delay(10000);
      GPRS.println("AT+CIPCLOSE");
      Serial.println("AT+CIPCLOSE");
      delay(2000);
  
  }
+
+
+
+
+
+boolean isGPRSReady(){
+
+      
+      GPRS.println("AT+CGATT=1");
+      delay(1000);
+      //UPDATE_SERIAL();
+      
+      GPRS.println("AT+CGATT?");
+      int index = 0;
+      char data1[15]={};
+      String  gprsStr;
+
+
+       while(GPRS.available()) 
+      {
+        data1[index++]=GPRS.read();//Forward what Software Serial received to Serial Port
+       // Serial.write(gprsStr[index-1]);     
+      }
+      data1[index++] = '\0'; //end of character array
+      gprsStr = data1;  //stores it in a string variable
+     
+
+      Serial.print("gprs str = ");
+      Serial.println(data1);
+
+         if (gprsStr.indexOf("+CGATT:1") > -1){
+            Serial.println("GPRS OK");
+            return true;
+         }
+         else {
+            Serial.println("GPRS NOT OK");
+            return false;
+         }
+         
+}
+
+
+
+// bool isGPRSReady(){
+
+//    GPRS.println("AT");
+//    delay(2000);
+//    ShowSerialData();
+   
+//    //GPRS.println("AT");
+//    GPRS.println("AT+CGATT?");
+//    delay(2000);
+//    ShowSerialData();
+   
+//    int index = 0;
+//    char data1;
+//    String gprsStr;
+
+//     ShowSerialData();
+    
+//    while (GPRS.available()){
+//       data1 = (char)GPRS.read();
+//       Serial.write(data1);
+//       gprsStr[index++] = data1;
+//    }
+    
+//       Serial.println("Check OK");
+//       Serial.print("gprs str = ");
+//       Serial.println(gprsStr);
+//       Serial.println(data1);
+//       Serial.println("here\n");
+
+//    if (data1>-1){
+//       Serial.println("GPRS OK");
+//    return true;
+//    }
+//    else {
+//       Serial.println("GPRS NOT OK");
+//    return false;
+//    }
+
+//    Serial.println("send AT to wake up GPRS");
+
+// }

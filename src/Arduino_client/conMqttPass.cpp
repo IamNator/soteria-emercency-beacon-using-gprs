@@ -29,27 +29,33 @@ void mqtt_connect_message(uint8_t * mqtt_message, char * client_id, char * usern
 		mqtt_message[15] = client_id_length;       // Client ID length LSB
 
         // Client ID
-        for(i = 0; i < client_id_length + 16; i++){
-            mqtt_message[16 + i] = client_id[i];
+        i = 16;
+        int k = 0;
+
+        for(k=0; (i < client_id_length + 16 ) && k < client_id_length; i++, k++){
+            mqtt_message[i] = client_id[k];
         }
 
-        mqtt_message[17+i] = 0;                      // ULEN MSB
-		mqtt_message[18+i] = username_length;        // username Length LSB
+        mqtt_message[i++] = 0;                      // ULEN MSB
+		mqtt_message[i++] = username_length;        // username Length LSB
 
-        uint8_t addy = 19 + i;                       //next charater's index
+        int addy = username_length + i;                   //next charater's index
+
+  
          // Username
-        for(i = 0; i < username_length + addy ; i++){
-            mqtt_message[addy + i] = username[i];
+        for(k=0; (i < addy) && (k<username_length) ; i++, k++){
+            mqtt_message[i] = username[k];
         }
 
-        addy = addy + i;
-        mqtt_message[addy + 1] = 0;                    // PWLEN MSB
-		mqtt_message[addy + 2] = password_length;      // password Length LSB
+      
+        mqtt_message[i++] = 0;                    // PWLEN MSB
+		    mqtt_message[i++] = password_length;      // password Length LSB
 
-        addy = addy + 3;                               //next charater's index
+        addy = password_length + i;                              //next charater's index
          // Username
-        for(i = 0; i < password_length + addy ; i++){
-            mqtt_message[addy + i] = password[i];
+
+       for(k=0; i < addy && k<password_length; i++,k++){
+            mqtt_message[i] = password[k];
         }
 
 //an example
