@@ -1,0 +1,118 @@
+Starting
+
+gprs str = 
+
+GPRS NOT OK
+
+gprs str = 
+
+GPRS NOT OK
+
+AT+CGATT?
+
+
+
++CGATT:0
+
+
+
+OK
+
+AT
+
+
+
+OK
+
+awoken 
+
+
+gprs str = AT+CGATT=1
+
+AT+CGATT?
+
+
+
++CGATT:1
+
+
+
+OK
+
+
+
+GPRS OK
+
+Ready to send
+
+Sendind light: "on"
+
+NETWORK SELECTED
+
+GPRS APN SET
+
+WIRELESS CONNECTION SET
+
+AT+CIFSR
+
+
+
+10.136.0.153
+
+
+
+OK
+
+
+
+SERVER CONNECTED
+
+48
+
+
+--------------MQTT_CONNECT_MESSAGE_SENT--------------
+
+23
+
+-------------MQTT_MESSAGE_SENT-------------
+
+AT+CIPCLOSE
+
+
+
+OK
+
+AT
+
+
+
+OK
+
+awoken 
+
+
+gprs str = AT+CGATT=1
+
+
+
+OK
+
+AT+CGATT?
+
+
+
++CGATT:1
+
+
+
+OK
+
+
+
+GPRS OK
+
+Ready to send
+
+Sendind light: "on"
+
+
